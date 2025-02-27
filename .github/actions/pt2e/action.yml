@@ -1,11 +1,6 @@
 name: inductor-xpu-pt2e-test
 
 inputs:
-  suite:
-    required: true
-    type: string
-    default: 'huggingface'
-    description: Dynamo benchmarks test suite. huggingface,timm_models,torchbench. Delimiter is comma
   env_prepare:
     required: false
     description: If set to any value, will prepare suite test env
