@@ -1,11 +1,6 @@
 name: inductor-xpu-pt2e-test
 
 inputs:
-  suite:
-    required: true
-    type: string
-    default: 'pt2e'
-    description: Dynamo benchmarks test suite. huggingface,timm_models,torchbench,pt2e. Delimiter is comma
   env_prepare:
     required: false
     description: If set to any value, will prepare suite test env
@@ -22,7 +17,7 @@ inputs:
   scenario:
     required: true
     type: string
-    default: 'performance'
+    default: 'accuracy'
     description: accuracy,performance. Delimiter is comma
   cards:
     required: false
@@ -50,7 +45,7 @@ runs:
       if: ${{ inputs.env_prepare }}
       shell: bash
       run: |
-        source activate pt2e_ci
+        source activate e2e_ci
         source .github/scripts/env.sh ${{ inputs.pytorch }}
         # accuracy code
         if [[ "${{ inputs.scenario }}" == *"accuracy"* ]];then
@@ -82,6 +77,7 @@ runs:
           rm -rf pt2e-benchmark
           git clone https://github.com/pytorch/benchmark pt2e-benchmark
           cd pt2e-benchmark && git checkout $TORCHBENCH_COMMIT_ID && pip install --no-deps -r requirements.txt
+          pip install -U transformers tokenizers safetensors
           python install.py --continue_on_fail
           cd ../
           # deps for torchrec_dlrm
@@ -101,7 +97,7 @@ runs:
           mkdir -p ${HOME}/datasets/imagenet
           cd ${HOME}/datasets/imagenet
           wget https://image-net.org/data/ILSVRC/2012/ILSVRC2012_img_val.tar
-          tar -xvf ILSVRC2012_img_val.tar
+          tar -xf ILSVRC2012_img_val.tar
           wget -O valprep.sh https://raw.githubusercontent.com/soumith/imagenetloader.torch/master/valprep.sh
           bash valprep.sh
         fi
@@ -112,7 +108,7 @@ runs:
         DisableScratchPages: ${{ inputs.driver == 'rolling' && '1' || '0' }}
       shell: bash
       run: |
-        source activate pt2e_ci
+        source activate e2e_ci
         source .github/scripts/env.sh ${{ inputs.pytorch }}
         pt2e_logs_dir="${{ github.workspace }}/../pytorch/inductor_log"
         rm -rf "${pt2e_logs_dir}" && mkdir -p "${pt2e_logs_dir}"
@@ -132,15 +128,15 @@ runs:
           models+="shufflenet_v2_x1_0,squeezenet1_1,Super_SloMo,timm_efficientnet,timm_nfnet,timm_regnet,timm_resnest,"
           models+="timm_vision_transformer,timm_vision_transformer_large,timm_vovnet,vgg16"
           if [[ "${{ inputs.dt }}" == *"float32"* ]];then
-            rm -rf pt2e-performance/.userbenchmark/xpu/xpu-*
-            python pt2e-performance/run_benchmark.py xpu --test eval --channels-last --metrics throughputs --torchdynamo inductor -m $models |\
+            rm -rf pt2e-performance/.userbenchmark
+            python pt2e-performance/run_benchmark.py xpu --test eval --channels-last --metrics throughputs --torchdynamo inductor -m $models 2>&1 |\
                     tee "${pt2e_logs_dir}/performance-fp32.log"
-            mv pt2e-performance/.userbenchmark/xpu/xpu-* ${pt2e_logs_dir}/performance-fp32
+            mv pt2e-performance/.userbenchmark ${pt2e_logs_dir}/performance-fp32
           fi
-          if [[ "${{ inputs.dt }}" == *"int8"* ]];then
-            rm -rf pt2e-performance/.userbenchmark/xpu/xpu-*
-            python pt2e-performance/run_benchmark.py xpu --test eval --channels-last --metrics throughputs --torchdynamo inductor --quantization pt2e -m $models |\
+          if [[ "${{ inputs.dt }}" == *"float32"* ]];then
+            rm -rf pt2e-performance/.userbenchmark
+            python pt2e-performance/run_benchmark.py xpu --test eval --channels-last --metrics throughputs --torchdynamo inductor --quantization pt2e -m $models 2>&1 |\
                     tee "${pt2e_logs_dir}/performance-int8.log"
-            mv pt2e-performance/.userbenchmark/xpu/xpu-* ${pt2e_logs_dir}/performance-int8
+            mv pt2e-performance/.userbenchmark ${pt2e_logs_dir}/performance-int8
           fi
         fi
