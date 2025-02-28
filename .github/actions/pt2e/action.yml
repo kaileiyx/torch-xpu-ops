@@ -9,21 +9,11 @@ inputs:
     type: string
     default: 'float32'
     description: Data precision of the test.float32,int8. Delimiter is comma
-  mode:
-    required: true
-    type: string
-    default: 'inference'
-    description: inference. Delimiter is comma
   scenario:
     required: true
     type: string
     default: 'accuracy'
     description: accuracy,performance. Delimiter is comma
-  cards:
-    required: false
-    type: string
-    default: 'all'
-    description: which cards can be used in the test
   hf_token:
     required: false
     description: HUGGING_FACE_HUB_TOKEN for torchbench test
