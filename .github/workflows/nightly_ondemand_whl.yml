@@ -1,7 +1,7 @@
 name: Torch Nightly WHL Tests
 
 on:
-  schedule:
+  #schedule:
     # GMT+8 21:00 every workday
     #- cron: '0 14 * * 0-4'
     # GMT+8 0:00 Saturday
