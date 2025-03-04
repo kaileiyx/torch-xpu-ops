@@ -6,7 +6,7 @@ import pandas as pd
 
 
 work_dir = sys.argv[1]
-# scan files endwith .log and accuracy in file 
+# scan files endwith .log and accuracy in folder
 for root, dirs, files in os.walk(work_dir):
     for file in files:
         if file.endswith('.log') and 'accuracy' in file:
@@ -26,7 +26,7 @@ for root, dirs, files in os.walk(work_dir):
                         acc1 = parts[4]
                         acc5 = parts[6]
                         csvData.append([model,acc5])
-            # write csv
+                # write csv
                 with open(csv_file_path, 'w', newline='', encoding='utf-8') as csv_file:
                     writer = csv.writer(csv_file)
                     writer.writerow(['Model',dt])
