@@ -3,6 +3,7 @@
 results_dir="$1"
 check_file="$(dirname "$0")/../ci_expected_accuracy/check_expected.py"
 
+<<<<<<< HEAD
 function get_model_result() {
     echo -e "\n<table><thead>
         <tr>
@@ -90,14 +91,31 @@ Empty means the cases NOT run\n\n"
     printf "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
     echo > /tmp/tmp-summary.txt
     echo > /tmp/tmp-details.txt
+=======
+# Accuracy
+accuracy=$(find "${results_dir}" -name "*.csv" |grep -E "_xpu_accuracy.csv" -c)
+if [ "${accuracy}" -gt 0 ];then
+    echo "### Accuracy"
+    printf "| Category | Total | \$\${\\color{green}Passed}\$\$ | Pass Rate | \$\${\\color{red}Failed}\$\$ | "
+    printf "\$\${\\color{blue}Xfailed}\$\$ | \$\${\\color{orange}Timeout}\$\$ | New Passed | New Enabled | Not Run |\n"
+    printf "| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |"
+    echo > tmp-summary.txt
+    echo > tmp-details.txt
+>>>>>>> 3e8a91530b7a6c86b5329f72a86bd129a0835501
     for csv in $(find "${results_dir}" -name "*.csv" |grep -E "_xpu_accuracy.csv" |sort)
     do
         category="$(echo "${csv}" |sed 's/.*inductor_//;s/_xpu_accuracy.*//')"
         suite="$(echo "${csv}" |sed 's/.*inductor_//;s/_.*//;s/timm/timm_models/')"
         mode="$(echo "${csv}" |sed 's/_xpu_accuracy.*//;s/.*_//')"
+<<<<<<< HEAD
         dtype="$(echo "${csv}" |sed -E 's/.*inductor_[a-z]*_//;s/models_//;s/_infer.*|_train.*//')"
         python "${check_file}" --suite "${suite}" --mode "${mode}" --dtype "${dtype}" --csv_file "${csv}" > "/tmp/tmp-${suite}-${mode}-${dtype}.txt"
         test_result="$(sed 's/, /,/g' "/tmp/tmp-${suite}-${mode}-${dtype}.txt" |awk '{
+=======
+        dt="$(echo "${csv}" |sed -E 's/.*inductor_[a-z]*_//;s/models_//;s/_infer.*|_train.*//')"
+        python "${check_file}" --suite "${suite}" --mode "${mode}" --dtype "${dt}" --csv_file "${csv}" > tmp-result.txt
+        test_result="$(sed 's/, /,/g' tmp-result.txt |awk '{
+>>>>>>> 3e8a91530b7a6c86b5329f72a86bd129a0835501
             if($0 ~/Total/){
                 total = $3;
             }
@@ -135,10 +153,29 @@ Empty means the cases NOT run\n\n"
             printf(" %d | %d | %s | %d | %d | %d | %d | %d | %d\n",
                 total, passed, pass_rate, failed, xfail, timeout, new_passed, new_enabled, not_run);
         }')"
+<<<<<<< HEAD
         echo "| ${category} | ${test_result} |" >> /tmp/tmp-summary.txt
     done
     cat /tmp/tmp-summary.txt
     get_model_result
+=======
+        echo "| ${category} | ${test_result} |" >> tmp-summary.txt
+        sed -i '
+            s/Real failed models:/$${\\color{red}Real \\space failed \\space models}$$:/g;
+            s/Expected failed models:/$${\\color{blue}Expected \\space failed \\space models}$$:/g;
+            s/Warning timeout models:/$${\\color{orange}Warning \\space timeout \\space models}$$:/g;
+            s/Failed to passed models:/$${\\color{green}Failed \\space to \\space passed \\space models}$$:/g;
+        ' tmp-result.txt
+        {
+            echo "<table><thead><tr><th colspan=2>$(sed 's/=//g' tmp-result.txt |head -n 1)</th></tr></thead><tbody>"
+            sed "1d" tmp-result.txt |awk -F: '{printf("<tr><td>%s</td><td>%s</td></tr>\n", $1, $2)}'
+            echo -e "</tbody></table>\n"
+        } >> tmp-details.txt
+    done
+    cat tmp-summary.txt
+    grep -v "<td> 0 \[\]</td>" tmp-details.txt
+    rm -rf tmp-*.txt
+>>>>>>> 3e8a91530b7a6c86b5329f72a86bd129a0835501
 fi
 
 # Performance

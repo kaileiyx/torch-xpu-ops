@@ -1,3 +1,4 @@
+
 name: inductor-xpu-e2e-test
 
 inputs:
@@ -125,6 +126,7 @@ runs:
               do
                 contains "accuracy,performance" $scenario
                 $contains_status
+<<<<<<< HEAD
                 if [ "${MODEL_ONLY_NAME}" == "" ];then
                   xpu_list=($(xpu-smi discovery |grep 'DRM Device: /dev/' |sed 's/.*card//;s/[^0-9].*//' |awk '{print $1 - 1":"NR - 1}'))
                   for xpu_id in ${xpu_list[*]}
@@ -137,6 +139,9 @@ runs:
                     bash inductor_xpu_test.sh ${suite} ${dt} ${mode} ${scenario} xpu 0 static 1 0 ${test_model}
                   done
                 fi
+=======
+                bash inductor_xpu_test.sh ${suite} ${dt} ${mode} ${scenario} xpu 0 static 1 0
+>>>>>>> 3e8a91530b7a6c86b5329f72a86bd129a0835501
                 wait
                 # summarize pass rate
                 LOG_DIR="inductor_log/${suite}/${dt}"
