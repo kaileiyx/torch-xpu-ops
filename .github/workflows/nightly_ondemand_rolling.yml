@@ -1,11 +1,11 @@
 name: Nightly-OnDemand Tests Rolling
 
 on:
-  schedule:
+  #schedule:
     # GMT+8 21:30 every workday
-    - cron: '30 13 * * 0-4'
+    #- cron: '30 13 * * 0-4'
     # GMT+8 0:30 Saturday
-    - cron: '30 16 * * 5'
+    #- cron: '30 16 * * 5'
   workflow_dispatch:
     inputs:
       pytorch:

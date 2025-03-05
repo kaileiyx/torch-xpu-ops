@@ -1,11 +1,11 @@
 name: Nightly-OnDemand Tests
 
 on:
-  schedule:
+  #schedule:
     # GMT+8 21:00 every workday
-    - cron: '0 13 * * 0-4'
+    #- cron: '0 13 * * 0-4'
     # GMT+8 0:00 Saturday
-    - cron: '0 16 * * 5'
+    #- cron: '0 16 * * 5'
   workflow_dispatch:
     inputs:
       pytorch:
@@ -78,7 +78,7 @@ jobs:
       keep_torch_xpu_ops: ${{ github.event_name == 'schedule' && 'false' || inputs.keep_torch_xpu_ops }}
       abi: 1
       python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
-      runner: pvc_e2e
+      runner: kailei-test
 
   Linux-Nightly-Ondemand-UT-Tests:
     if: ${{ github.event_name == 'schedule' || inputs.ut != '' }}
@@ -94,7 +94,7 @@ jobs:
       runner: linux.idc.xpu
 
   Linux-Nightly-Ondemand-E2E-Tests:
-    runs-on: pvc_e2e
+    runs-on: [self-hosted,Linux,X64,kailei-test]
     name: linux-nightly-ondemand / e2e_test
     # Don't run on forked repos
     if: ${{ github.repository_owner == 'intel' }}
