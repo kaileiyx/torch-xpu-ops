@@ -66,9 +66,9 @@ jobs:
       runner: linux.idc.xpu
 
   Linux-Nightly-Ondemand-E2E-WHL-Tests:
-    runs-on: pvc_e2e
+    runs-on: [self-hosted,Linux,X64,test]
     # Don't run on forked repos
-    if: ${{ github.repository_owner == 'intel' }}
+    if: ${{ github.repository_owner == 'kaileiyx' }}
     timeout-minutes: 3600
     env:
       pytorch: ${{ github.event_name == 'schedule' && 'nightly' || inputs.pytorch }}
@@ -298,7 +298,7 @@ jobs:
 
   Tests-Failure-And-Report:
     if: ${{ ! cancelled() }}
-    runs-on: [ self-hosted, Linux ]
+    runs-on: [self-hosted,Linux,X64,test]
     permissions:
       issues: write
     env:
