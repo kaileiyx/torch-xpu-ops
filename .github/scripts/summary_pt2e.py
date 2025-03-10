@@ -4,9 +4,8 @@ import json
 import csv
 import pandas as pd
 
-
 work_dir = sys.argv[1]
-# scan files endwith .log and accuracy in file 
+# scan files endwith .log and accuracy in file
 for root, dirs, files in os.walk(work_dir):
     for file in files:
         if file.endswith('.log') and 'accuracy' in file:
@@ -69,8 +68,8 @@ for item in os.listdir(work_dir):
 for filename in os.listdir(work_dir):
     if filename.endswith('.csv') and 'accuracy' in filename and 'fp32' in filename:
         file_path = os.path.join(work_dir, filename)
-        df_fp32 = pd.read_csv(file_path)        
-        
+        df_fp32 = pd.read_csv(file_path)
+
     if filename.endswith('.csv') and 'accuracy' in filename and 'int8' in filename:
         file_path = os.path.join(work_dir, filename)
         df_int8 = pd.read_csv(file_path)

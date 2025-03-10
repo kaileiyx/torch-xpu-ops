@@ -286,8 +286,8 @@ jobs:
             source activate e2e_ci
             cp -r ${{ github.workspace }}/.github/scripts/summary_pt2e.py ${{ github.workspace }}/upload_files
             cd ${{ github.workspace }}/upload_files
-            python summary_pt2e.py ${{ github.workspace }}/upload_files
-            rm -rf summary_pt2e.py
+            # python summary_pt2e.py ${{ github.workspace }}/upload_files
+            # rm -rf summary_pt2e.py
           fi
       - name: Upload Inductor XPU E2E Data
         if: ${{ ! cancelled() }}
