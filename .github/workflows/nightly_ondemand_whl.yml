@@ -74,6 +74,8 @@ jobs:
       pytorch: ${{ github.event_name == 'schedule' && 'nightly' || inputs.pytorch }}
       ut: ${{ github.event_name == 'schedule' && 'op_regression,op_regression_dev1,op_extended,op_ut' || inputs.ut }}
       python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
+      NEOReadDebugKeys: 1
+      DisableScratchPages: 1
     outputs:
       TORCH_BRANCH_ID: ${{ steps.installed.outputs.TORCH_BRANCH_ID }}
       TORCH_COMMIT_ID: ${{ steps.installed.outputs.TORCH_COMMIT_ID }}
@@ -106,7 +108,8 @@ jobs:
         run: |
           pwd
           source activate e2e_ci
-          pip install torch torchvision torchaudio --pre --index-url https://download.pytorch.org/whl/nightly/xpu
+          pip install -U torch --index-url https://download.pytorch.org/whl/test/xpu
+          # pip install torch torchvision torchaudio --pre --index-url https://download.pytorch.org/whl/nightly/xpu
           echo "TORCH_BRANCH_ID=$(python -c 'import torch; print(torch.__version__)')" |tee -a "${GITHUB_OUTPUT}" >> "${GITHUB_ENV}"
           TORCH_COMMIT_ID=$(python -c 'import torch; print(torch.version.git_version)')
           echo "TORCH_COMMIT_ID=${TORCH_COMMIT_ID}" |tee -a "${GITHUB_OUTPUT}" >> "${GITHUB_ENV}"
