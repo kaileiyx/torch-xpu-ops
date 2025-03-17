@@ -79,7 +79,7 @@ jobs:
       keep_torch_xpu_ops: ${{ github.event_name == 'schedule' && 'false' || inputs.keep_torch_xpu_ops }}
       abi: 1
       python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
-      runner: kailei-test
+      runner: test
 
   Linux-Nightly-Ondemand-UT-Tests:
     if: ${{ github.event_name == 'schedule' || inputs.ut != '' }}
@@ -92,10 +92,10 @@ jobs:
       pytorch: ${{ inputs.pytorch }}
       python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
       triton: ${{ github.event_name == 'schedule' && '' || inputs.triton }}
-      runner: kailei-test
+      runner: test
 
   Linux-Nightly-Ondemand-E2E-Tests:
-    runs-on: [self-hosted,Linux,X64,kailei-test]
+    runs-on: test
     name: linux-nightly-ondemand / e2e_test
     # Don't run on forked repos
     if: ${{ github.repository_owner == 'kaileiyx' }}

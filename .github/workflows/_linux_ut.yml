@@ -249,6 +249,7 @@ jobs:
 
           # All Issue Reproduce UT
           mkdir -p ${{ github.workspace }}/ut_log/profile_test/issue_reproduce
+          mkdir -p ${{ github.workspace }}/ut_log/profile_test/issue_reproduce
           python -u test/profiling/correlation_id_mixed.py | tee ${{ github.workspace }}/ut_log/profile_test/issue_reproduce/correlation_id_mixed.log
           python -u test/profiling/reproducer.missing.gpu.kernel.time.py | tee ${{ github.workspace }}/ut_log/profile_test/issue_reproduce/reproducer.missing.gpu.kernel.time.log
           python -u test/profiling/time_precision_in_profile.py | tee ${{ github.workspace }}/ut_log/profile_test/issue_reproduce/time_precision_in_profile.log
