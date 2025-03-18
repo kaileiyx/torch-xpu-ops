@@ -123,7 +123,7 @@ jobs:
           TORCH_XPU_OPS_COMMIT=${{ github.sha }}
           echo "TORCH_XPU_OPS_COMMIT=${TORCH_XPU_OPS_COMMIT}" |tee -a "${GITHUB_OUTPUT}" >> "${GITHUB_ENV}"
           rm -rf third_party/torch-xpu-ops
-          git clone https://github.com/intel/torch-xpu-ops.git third_party/torch-xpu-ops
+          git clone https://github.com/kaileiyx/torch-xpu-ops.git third_party/torch-xpu-ops
           cd third_party/torch-xpu-ops
           git checkout ${TORCH_XPU_OPS_COMMIT}
           cd ../../
@@ -314,7 +314,7 @@ jobs:
     needs: Linux-Nightly-Ondemand-E2E-WHL-Tests
     steps:
       - name: Report github issue for XPU OPS nightly
-        if: github.repository_owner == 'intel'
+        if: github.repository_owner == 'kaileiyx'
         run: |
           set -xe
           # Test env
