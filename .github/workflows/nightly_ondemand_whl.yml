@@ -108,7 +108,7 @@ jobs:
         run: |
           pwd
           source activate e2e_ci
-          pip install torch==2.6.0 torchvision torchaudio --index-url https://download.pytorch.org/whl/xpu
+          pip install torch torchvision torchaudio --pre --index-url https://download.pytorch.org/whl/nightly/xpu
           echo "TORCH_BRANCH_ID=$(python -c 'import torch; print(torch.__version__)')" |tee -a "${GITHUB_OUTPUT}" >> "${GITHUB_ENV}"
           TORCH_COMMIT_ID=$(python -c 'import torch; print(torch.version.git_version)')
           echo "TORCH_COMMIT_ID=${TORCH_COMMIT_ID}" |tee -a "${GITHUB_OUTPUT}" >> "${GITHUB_ENV}"
@@ -120,7 +120,7 @@ jobs:
           # python ../torch-xpu-ops/.github/scripts/apply_torch_pr.py
           git status && git show -s
           pip install -r requirements.txt
-          TORCH_XPU_OPS_COMMIT=${{ github.sha }}
+          TORCH_XPU_OPS_COMMIT=$(<third_party/xpu.txt)
           echo "TORCH_XPU_OPS_COMMIT=${TORCH_XPU_OPS_COMMIT}" |tee -a "${GITHUB_OUTPUT}" >> "${GITHUB_ENV}"
           rm -rf third_party/torch-xpu-ops
           git clone https://github.com/kaileiyx/torch-xpu-ops.git third_party/torch-xpu-ops
@@ -291,10 +291,10 @@ jobs:
             fi
           else
             source activate e2e_ci
-            #cp -r ${{ github.workspace }}/.github/scripts/summary_pt2e.py ${{ github.workspace }}/upload_files
+            cp -r ${{ github.workspace }}/.github/scripts/summary_pt2e.py ${{ github.workspace }}/upload_files
             cd ${{ github.workspace }}/upload_files
-            # python summary_pt2e.py ${{ github.workspace }}/upload_files
-            # rm -rf summary_pt2e.py
+            python summary_pt2e.py ${{ github.workspace }}/upload_files
+            rm -rf summary_pt2e.py
           fi
       - name: Upload Inductor XPU E2E Data
         if: ${{ ! cancelled() }}
