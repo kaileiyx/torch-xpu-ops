@@ -45,7 +45,7 @@ runs:
         # performance code
         if [[ "${{ inputs.scenario }}" == *"performance"* ]];then
           rm -rf pt2e-performance
-          git clone -b yifeng/pt2e_xpu https://github.com/zxd1997066/benchmark pt2e-performance
+          git clone -b zhiwei/qscheme https://github.com/zxd1997066/benchmark pt2e-performance
         fi
         # deps
         if [[ ${{ inputs.scenario }} == *"performance"* ]]; then
