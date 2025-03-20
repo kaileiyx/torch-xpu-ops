@@ -122,6 +122,7 @@ runs:
             mv pt2e-performance/.userbenchmark ${pt2e_logs_dir}/performance-fp32
           fi
           if [[ "${{ inputs.dt }}" == *"int8"* ]];then
+            rm -rf pt2e-performance/.userbenchmark
             XPU_QUANT_CONFIG=ASYMM python pt2e-performance/run_benchmark.py xpu --test eval --channels-last --metrics throughputs --torchdynamo inductor --quantization pt2e -m $models 2>&1 |\
                     tee "${pt2e_logs_dir}/performance-int8-ASYMM.log"
             mv pt2e-performance/.userbenchmark ${pt2e_logs_dir}/performance-int8-ASYMM
