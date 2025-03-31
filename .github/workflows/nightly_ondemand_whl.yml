@@ -57,18 +57,18 @@ concurrency:
 
 jobs:
   Linux-Nightly-Ondemand-UT-WHL-Tests:
-    if: ${{ github.repository_owner == 'kaileiyx' }}
+    if: ${{ github.repository_owner == 'intel' }}
     uses: ./.github/workflows/_linux_ut.yml
     with:
       ut: ${{ github.event_name == 'schedule' && 'op_regression,op_regression_dev1,op_extended,op_ut' || inputs.ut }}
       python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
       pytorch: nightly_wheel
-      runner: kailei-test
+      runner: arc
 
   Linux-Nightly-Ondemand-E2E-WHL-Tests:
     runs-on: arc
     # Don't run on forked repos
-    if: ${{ github.repository_owner == 'intel' }}
+    if: ${{ github.repository_owner == 'kaileiyx' }}
     timeout-minutes: 3600
     env:
       pytorch: ${{ github.event_name == 'schedule' && 'nightly' || inputs.pytorch }}
