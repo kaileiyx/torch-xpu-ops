@@ -68,7 +68,7 @@ jobs:
   Linux-Nightly-Ondemand-E2E-WHL-Tests:
     runs-on: arc
     # Don't run on forked repos
-    if: ${{ github.repository_owner == 'intel' }}
+    if: ${{ github.repository_owner == 'kaileiyx' }}
     timeout-minutes: 3600
     env:
       pytorch: ${{ github.event_name == 'schedule' && 'nightly' || inputs.pytorch }}
