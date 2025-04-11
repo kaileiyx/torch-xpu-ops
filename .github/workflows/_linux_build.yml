@@ -90,7 +90,8 @@ jobs:
           fi
           pip install mkl-static==2025.0.1 mkl-include==2025.0.1
           build_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          repo="${{ github.repository }}"
+          # repo="${{ github.repository }}"
+          repo="intel/torch-xpu-ops"
           last_commit=$(gh --repo $repo issue view $commit_issue --json body -q .body | grep ${{ inputs.pytorch }} | cut -d'[' -f 2 | cut -d']' -f 1)
           cd ../pytorch
           current_commit=$(git rev-parse HEAD)
