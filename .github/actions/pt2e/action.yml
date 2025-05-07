@@ -36,7 +36,6 @@ runs:
       shell: bash
       run: |
         source activate e2e_ci
-        source .github/scripts/env.sh ${{ inputs.pytorch }}
         # accuracy code
         if [[ "${{ inputs.scenario }}" == *"accuracy"* ]];then
           rm -rf pt2e-accuracy
@@ -45,27 +44,25 @@ runs:
         # performance code
         if [[ "${{ inputs.scenario }}" == *"performance"* ]];then
           rm -rf pt2e-performance
-          git clone -b zhiwei/qscheme https://github.com/zxd1997066/benchmark pt2e-performance
+          git clone -b yifeng/pt2e_xpu https://github.com/zxd1997066/benchmark pt2e-performance
         fi
         # deps
         if [[ ${{ inputs.scenario }} == *"performance"* ]]; then
-          pip install pyyaml botocore
           if [ "${{ inputs.pytorch }}" != "nightly_wheel" ]; then
             rm -rf pt2e-audio
             git clone --single-branch -b main https://github.com/pytorch/audio pt2e-audio
             cd pt2e-audio && git checkout $TORCHAUDIO_COMMIT_ID
-            python setup.py bdist_wheel && pip uninstall torchaudio -y && pip install --no-deps dist/*.whl
+            python setup.py bdist_wheel && pip uninstall torchaudio -y && pip install dist/*.whl
             cd ../
             rm -rf pt2e-vision
             git clone --single-branch -b main https://github.com/pytorch/vision pt2e-vision
             cd pt2e-vision && git checkout $TORCHVISION_COMMIT_ID
-            python setup.py bdist_wheel && pip uninstall torchvision -y && pip install --no-deps dist/*.whl
+            python setup.py bdist_wheel && pip uninstall torchvision -y && pip install dist/*.whl
             cd ../
           fi
           # torchbench
           python -c "import torch, torchvision, torchaudio"
-          cd pt2e-performance && pip install --no-deps -r requirements.txt
-          pip install -U transformers tokenizers safetensors
+          cd pt2e-performance && pip install -r requirements.txt
           python install.py --continue_on_fail
           cd ../
           # deps for torchrec_dlrm
@@ -97,8 +94,7 @@ runs:
       shell: bash
       run: |
         source activate e2e_ci
-        source .github/scripts/env.sh ${{ inputs.pytorch }}
-        pt2e_logs_dir="${{ github.workspace }}/../pytorch/inductor_log"
+        pt2e_logs_dir="${{ github.workspace }}/../pytorch/inductor_log/pt2e"
         rm -rf "${pt2e_logs_dir}" && mkdir -p "${pt2e_logs_dir}"
         if [[ "${{ inputs.scenario }}" == *"accuracy"* ]];then
           if [[ "${{ inputs.dt }}" == *"float32"* ]];then
