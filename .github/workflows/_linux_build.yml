@@ -90,7 +90,8 @@ jobs:
           fi
           pip install mkl-static==2025.0.1 mkl-include==2025.0.1
           build_url="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-          repo="${{ github.repository }}"
+          # repo="${{ github.repository }}"
+          repo="intel/torch-xpu-ops"
           last_commit=$(gh --repo $repo issue view $commit_issue --json body -q .body | grep ${{ inputs.pytorch }} | cut -d'[' -f 2 | cut -d']' -f 1)
           cd ../pytorch
           current_commit=$(git rev-parse HEAD)
@@ -110,9 +111,9 @@ jobs:
                 [ "${last_commit}" != "${current_commit}" ] && \
                 [[ "${{ inputs.pytorch }}" == "main" || "${{ inputs.pytorch }}" == "release/"* ]]; then
               echo "Wheel build successful, update last commit in the issue https://github.com/intel/torch-xpu-ops/issues/1280"
-              gh --repo $repo issue view $commit_issue --json body -q .body | sed "s;${last_commit};${current_commit};g" | sed '/^$/d' > new_body.txt
-              gh --repo $repo issue edit $commit_issue --body-file new_body.txt
-              gh --repo $repo issue comment $commit_issue -b "Update LKG torch, refer ${build_url}"
+              # gh --repo $repo issue view $commit_issue --json body -q .body | sed "s;${last_commit};${current_commit};g" | sed '/^$/d' > new_body.txt
+              # gh --repo $repo issue edit $commit_issue --body-file new_body.txt
+              # gh --repo $repo issue comment $commit_issue -b "Update LKG torch, refer ${build_url}"
             fi
             if [ ! -f dist/torch*.whl ]; then
               echo "Wheel build failed, use last commit in the issue https://github.com/intel/torch-xpu-ops/issues/1280"
