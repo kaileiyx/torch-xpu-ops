@@ -22,25 +22,21 @@ def get_model_result():
         for index, row in data_perf.iterrows():
             row_data = [row['Model']] + [f"{x:.2f}" if pd.notna(x) else "NULL" for x in row[1:]]
             print(f"| {row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]} | {row_data[4]} | {row_data[5]} | ")
-            
-    table_html = "<table><thead>"
-    table_html += "<tr>"
-    table_html += "<th rowspan=2> Model </th>"
-    table_html += "<th colspan=2> fp32 </th><th colspan=2> int8 </th><th colspan=2> int8/fp32 </th>"
-    table_html += "</tr><tr>"
-    table_html += "<th> Acc@1 </th><th> Acc@5 </th>"
-    table_html += "<th> Acc@1 </th><th> Acc@5 </th>"
-    table_html += "<th> Acc@1 </th><th> Acc@5 </th>"
-    table_html += "</tr></thead><tbody>"
     
+    html_table = '<table Accuracy>\n'
+    html_table += '  <tr>\n'
+    headers = data_acc.columns
+    for header in headers:
+        html_table += f'    <th>{header}</th>\n'
+    html_table += '  </tr>\n'
     for index, row in data_acc.iterrows():
-        table_html += "<tr>"
-        table_html += f"<td>{row['Model']}</td>"
-        table_html += f"<td>{row['fp32   Acc@1']}</td><td>{row['fp32   Acc@5']}</td>"
-        table_html += f"<td>{row['int8   Acc@1']}</td><td>{row['int8   Acc@5']}</td>"
-        table_html += f"<td>{row['int8/fp32   Acc@1']}</td><td>{row['int8/fp32   Acc@5']}</td>"
-        table_html += "</tr>"   
-    table_html += "</tbody></table>"
+        html_table += '  <tr>\n'
+        for value in row:
+            html_table += f'    <td>{value}</td>\n'
+        html_table += '  </tr>\n'
+    html_table += '</table>'
+    print(html_table)
+    
 
 def main():
     work_dir = sys.argv[1]
