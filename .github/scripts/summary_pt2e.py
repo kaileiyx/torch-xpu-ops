@@ -5,20 +5,21 @@ import csv
 import pandas as pd
 
 def get_model_result():
-    print("###Accuracy")
-    print("| Model | fp32 Acc@1 | fp32 Acc@5 | int8 Acc@1 | int8 Acc@5 | int8/fp32 Acc@1 | int8/fp32 Acc@5 |")
-    data_acc = pd.read_csv('summary_acc.csv')
-    data_acc.iloc[:, 1:] = data_acc.iloc[:, 1:].round(2)
-    for index, row in data_acc.iterrows():
-        print(f"| {row['Model']} | {row['fp32   Acc@1']} | {row['fp32   Acc@5']} | {row['int8   Acc@1']} | {row['int8   Acc@5']} | {row['int8/fp32   Acc@1']} | {row['int8/fp32   Acc@5']} |")
-    
-    print("###Performance")
-    print("| Model | fp32 | int8_ASYMM | int8_SYMM | ASYMM  int8/fp32 | SYMM  int8/fp32 |")
-    data_perf = pd.read_csv('summary_perf.csv')
-    data_perf.iloc[:, 1:] = data_perf.iloc[:, 1:].round(2)
-    for index, row in data_perf.iterrows():
-        row_data = [row['Model']] + [f"{x:.2f}" if pd.notna(x) else "NULL" for x in row[1:]]
-        print(f"| {row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]} | {row_data[4]} | {row_data[5]} | ")
+    if os.path.exists('summary_acc.csv'):
+        print("###Accuracy")
+        print("| Model | fp32 Acc@1 | fp32 Acc@5 | int8 Acc@1 | int8 Acc@5 | int8/fp32 Acc@1 | int8/fp32 Acc@5 |")
+        data_acc = pd.read_csv('summary_acc.csv')
+        data_acc.iloc[:, 1:] = data_acc.iloc[:, 1:].round(2)
+        for index, row in data_acc.iterrows():
+            print(f"| {row['Model']} | {row['fp32   Acc@1']} | {row['fp32   Acc@5']} | {row['int8   Acc@1']} | {row['int8   Acc@5']} | {row['int8/fp32   Acc@1']} | {row['int8/fp32   Acc@5']} |")
+    if os.path.exists('summary_perf.csv'):    
+        print("###Performance")
+        print("| Model | fp32 | int8_ASYMM | int8_SYMM | ASYMM  int8/fp32 | SYMM  int8/fp32 |")
+        data_perf = pd.read_csv('summary_perf.csv')
+        data_perf.iloc[:, 1:] = data_perf.iloc[:, 1:].round(2)
+        for index, row in data_perf.iterrows():
+            row_data = [row['Model']] + [f"{x:.2f}" if pd.notna(x) else "NULL" for x in row[1:]]
+            print(f"| {row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]} | {row_data[4]} | {row_data[5]} | ")
 
 def main():
     work_dir = sys.argv[1]
