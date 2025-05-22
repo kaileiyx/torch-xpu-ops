@@ -9,6 +9,8 @@ def get_model_result():
         print("###Accuracy")
         print("| Model | fp32 Acc@1 | fp32 Acc@5 | int8 Acc@1 | int8 Acc@5 | int8/fp32 Acc@1 | int8/fp32 Acc@5 |")
         data_acc = pd.read_csv('summary_acc.csv')
+        data_acc['int8/fp32   Acc@1'] = data_acc['int8/fp32   Acc@1'].apply(lambda x: f"{x * 100:.2f}%")
+        data_acc['int8/fp32   Acc@5'] = data_acc['int8/fp32   Acc@5'].apply(lambda x: f"{x * 100:.2f}%")
         data_acc.iloc[:, 1:] = data_acc.iloc[:, 1:].round(2)
         for index, row in data_acc.iterrows():
             print(f"| {row['Model']} | {row['fp32   Acc@1']} | {row['fp32   Acc@5']} | {row['int8   Acc@1']} | {row['int8   Acc@5']} | {row['int8/fp32   Acc@1']} | {row['int8/fp32   Acc@5']} |")
@@ -20,6 +22,25 @@ def get_model_result():
         for index, row in data_perf.iterrows():
             row_data = [row['Model']] + [f"{x:.2f}" if pd.notna(x) else "NULL" for x in row[1:]]
             print(f"| {row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]} | {row_data[4]} | {row_data[5]} | ")
+            
+    table_html = "<table><thead>"
+    table_html += "<tr>"
+    table_html += "<th rowspan=2> Model </th>"
+    table_html += "<th colspan=2> fp32 </th><th colspan=2> int8 </th><th colspan=2> int8/fp32 </th>"
+    table_html += "</tr><tr>"
+    table_html += "<th> Acc@1 </th><th> Acc@5 </th>"
+    table_html += "<th> Acc@1 </th><th> Acc@5 </th>"
+    table_html += "<th> Acc@1 </th><th> Acc@5 </th>"
+    table_html += "</tr></thead><tbody>"
+    
+    for index, row in data_acc.iterrows():
+        table_html += "<tr>"
+        table_html += f"<td>{row['Model']}</td>"
+        table_html += f"<td>{row['fp32   Acc@1']}</td><td>{row['fp32   Acc@5']}</td>"
+        table_html += f"<td>{row['int8   Acc@1']}</td><td>{row['int8   Acc@5']}</td>"
+        table_html += f"<td>{row['int8/fp32   Acc@1']}</td><td>{row['int8/fp32   Acc@5']}</td>"
+        table_html += "</tr>"   
+    table_html += "</tbody></table>"
 
 def main():
     work_dir = sys.argv[1]
