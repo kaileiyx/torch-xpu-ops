@@ -5,6 +5,7 @@ import csv
 import pandas as pd
 
 def get_model_result():
+    
     if os.path.exists('summary_acc.csv'):
         print("###Accuracy")
         print("| Model | fp32 Acc@1 | fp32 Acc@5 | int8 Acc@1 | int8 Acc@5 | int8/fp32 Acc@1 | int8/fp32 Acc@5 |")
@@ -22,20 +23,50 @@ def get_model_result():
         for index, row in data_perf.iterrows():
             row_data = [row['Model']] + [f"{x:.2f}" if pd.notna(x) else "NULL" for x in row[1:]]
             print(f"| {row_data[0]} | {row_data[1]} | {row_data[2]} | {row_data[3]} | {row_data[4]} | {row_data[5]} | ")
-    
-    html_table = '<table Accuracy>\n'
-    html_table += '  <tr>\n'
+    # Acc html
+    html_table_acc = '<table Accuracy>\n'
+    html_table_acc += '  <thead>\n'
+    html_table_acc += '    <tr>\n'
     headers = data_acc.columns
     for header in headers:
-        html_table += f'    <th>{header}</th>\n'
-    html_table += '  </tr>\n'
+        html_table_acc += f'    <th>{header}</th>\n'
+    html_table_acc += '  </tr>\n'
+    html_table_acc += '  </thead>\n'
+    html_table_acc += '  <tbody>\n'
     for index, row in data_acc.iterrows():
-        html_table += '  <tr>\n'
+        html_table_acc += '  <tr>\n'
         for value in row:
-            html_table += f'    <td>{value}</td>\n'
-        html_table += '  </tr>\n'
-    html_table += '</table>'
-    print(html_table)
+            html_table_acc += f'    <td>{value}</td>\n'
+        html_table_acc += '  </tr>\n'
+    html_table_acc += '  </tbody>\n'
+    html_table_acc += '</table>'
+    # Perf html
+    html_table_perf = '<table Performance>\n'
+    html_table_perf += '  <thead>\n'
+    html_table_perf += '    <tr>\n'
+    headers = data_perf.columns
+    for header in headers:
+        html_table_perf += f'    <th>{header}</th>\n'
+    html_table_perf += '  </tr>\n'
+    html_table_perf += '  </thead>\n'
+    html_table_perf += '  <tbody>\n'
+    for index, row in data_perf.iterrows():
+        html_table_perf += '  <tr>\n'
+        row_data = [row['Model']] + [f"{x:.2f}" if pd.notna(x) else "NULL" for x in row[1:]]
+        for value in row_data:
+            html_table_perf += f'    <td>{value}</td>\n'
+        html_table_perf += '  </tr>\n'
+    html_table_perf += '  </tbody>\n'
+    html_table_perf += '</table>'
+    
+    summary_file = os.getenv('GITHUB_STEP_SUMMARY')
+    if summary_file:
+        with open(summary_file, 'a') as f:
+            f.write("PT2E Accuracy Result\n")
+            f.write(html_table_acc)
+            f.write("PT2E Performance Result\n")
+            f.write(html_table_perf)
+    
     
 
 def main():
