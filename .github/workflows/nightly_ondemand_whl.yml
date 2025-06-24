@@ -57,7 +57,7 @@ concurrency:
 
 jobs:
   Linux-Nightly-Ondemand-E2E-WHL-Tests:
-    runs-on: arc
+    runs-on: BMG
     # Don't run on forked repos
     if: ${{ github.repository_owner == 'kaileiyx' }}
     timeout-minutes: 3600
