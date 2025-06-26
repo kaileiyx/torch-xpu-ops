@@ -173,7 +173,7 @@ jobs:
         if: ${{ inputs.pytorch != 'nightly_wheel' }}
         uses: actions/download-artifact@v4
         with:
-          name: Torch-XPU-Wheel-${{ github.event.pull_request.number || github.sha }}
+          name: Torch-XPU-Wheel-3a9419c8bb6a98dd3e3cd473c36691fb4abeae40
           path: ${{ github.workspace }}
       - name: Install Pytorch XPU
         run: |
