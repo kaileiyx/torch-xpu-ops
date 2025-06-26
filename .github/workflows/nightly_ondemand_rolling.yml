@@ -81,8 +81,7 @@ jobs:
 
   Linux-Nightly-Ondemand-E2E-Tests-Rolling:
     runs-on: BMG_perf
-    name: linux-nightly-ondemand-rolling / e2e_test
-    needs: Linux-Nightly-Ondemand-Build-Rolling
+    name: linux-nightly-ondemand-rolling / e2e_tests
     timeout-minutes: 3600
     env:
       GH_TOKEN: ${{ github.token }}
