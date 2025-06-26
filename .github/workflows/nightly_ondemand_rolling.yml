@@ -66,54 +66,28 @@ concurrency:
   cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 jobs:
-  Linux-Nightly-Ondemand-Build-Rolling:
-    if: ${{ github.repository_owner == 'intel' }}
-    name: linux-nightly-ondemand-rolling
-    secrets: inherit
-    uses: ./.github/workflows/_linux_build.yml
-    with:
-      pytorch: ${{ github.event_name == 'schedule' && 'main' || inputs.pytorch }}
-      keep_torch_xpu_ops: ${{ github.event_name == 'schedule' && 'false' || inputs.keep_torch_xpu_ops }}
-      python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
-      driver: rolling
-      runner: pvc_rolling
-      update_lkg: 'true'
-
   Linux-Nightly-Ondemand-UT-Tests-Rolling:
     if: ${{ github.event_name == 'schedule' || inputs.ut != '' }}
     name: linux-nightly-ondemand-rolling
-    needs: Linux-Nightly-Ondemand-Build-Rolling
     uses: ./.github/workflows/_linux_ut.yml
     with:
       keep_torch_xpu_ops: ${{ github.event_name == 'schedule' && 'false' || inputs.keep_torch_xpu_ops }}
       ut: ${{ github.event_name == 'schedule' && 'op_regression,op_regression_dev1,op_transformers,op_extended,op_ut' || inputs.ut }}
-      pytorch: ${{ needs.Linux-Nightly-Ondemand-Build-Rolling.outputs.torch_commit_id }}
+      pytorch: ${{ github.event_name == 'schedule' && 'nightly' || inputs.pytorch }}
       python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
       triton: ${{ github.event_name == 'schedule' && '' || inputs.triton }}
       driver: rolling
-      runner: pvc_rolling
-  
-  Linux-Nightly-Ondemand-OP-Microbench-Tests-Rolling:
-    name: linux-nightly-ondemand-rolling / Op_microbench
-    needs: Linux-Nightly-Ondemand-Build-Rolling
-    uses: ./.github/workflows/_linux_op_benchmark.yml
-    with:
-      keep_torch_xpu_ops: ${{ github.event_name == 'schedule' && 'false' || inputs.keep_torch_xpu_ops }}
-      pytorch: ${{ needs.Linux-Nightly-Ondemand-Build-Rolling.outputs.torch_commit_id }}
-      python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
-      triton: ${{ github.event_name == 'schedule' && '' || inputs.triton }}
-      driver: rolling
-      runner: pvc_rolling
+      runner: BMG_UT
 
   Linux-Nightly-Ondemand-E2E-Tests-Rolling:
-    runs-on: pvc_rolling
+    runs-on: BMG_perf
     name: linux-nightly-ondemand-rolling / e2e_test
     needs: Linux-Nightly-Ondemand-Build-Rolling
     timeout-minutes: 3600
     env:
       GH_TOKEN: ${{ github.token }}
       reference_issue: 1645
-      pytorch: ${{ needs.Linux-Nightly-Ondemand-Build-Rolling.outputs.torch_commit_id }}
+      pytorch: ${{ github.event_name == 'schedule' && 'nightly' || inputs.pytorch }}
       keep_torch_xpu_ops: ${{ github.event_name == 'schedule' && 'false' || inputs.keep_torch_xpu_ops }}
       python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
       NEOReadDebugKeys: 1
@@ -207,7 +181,7 @@ jobs:
           source activate e2e_ci
           cd ../pytorch
           pip install -r requirements.txt
-          pip install --force-reinstall ${{ github.workspace }}/torch*.whl
+          pip install --pre torch==2.8.0 --index-url https://download.pytorch.org/whl/test/xpu
       - name: Show GITHUB_ENV
         run: |
           echo "$GITHUB_ENV"
