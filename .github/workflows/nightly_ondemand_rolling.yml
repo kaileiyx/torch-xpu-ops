@@ -97,11 +97,12 @@ jobs:
     steps:
       - name: Checkout torch-xpu-ops
         uses: actions/checkout@v4
-      - name: Setup Virtual ENVAdd commentMore actions
+      - name: Setup Virtual ENV
         run: |
           rm -rf ${HOME}/kaileiyx/myvenv-2.8
           python -m venv ${HOME}/kaileiyx/myvenv-2.8
           source ${HOME}/kaileiyx/myvenv-2.8/bin/activate
+          pip install --upgrade pip setuptools
           which python && which python3
           python -V
           pip list
