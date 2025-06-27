@@ -100,6 +100,7 @@ jobs:
       - name: Setup Virtual ENV
         run: |
           rm -rf ${HOME}/kaileiyx/myvenv-2.8
+          source ~/.bashrc
           python -m venv ${HOME}/kaileiyx/myvenv-2.8
           source ${HOME}/kaileiyx/myvenv-2.8/bin/activate
           pip install --upgrade pip setuptools
