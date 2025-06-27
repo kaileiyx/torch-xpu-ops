@@ -166,9 +166,10 @@ jobs:
           source activate e2e_ci
           cd ../pytorch
           pip install cmake ninja pybind11
-          rm -rf pytorch_triton_xpu-*.whl
-          python .github/scripts/build_triton_wheel.py --device xpu --commit-hash ${TRITON_COMMIT_ID}
-          pip install pytorch_triton_xpu-*.whl
+          #rm -rf pytorch_triton_xpu-*.whl
+          #python .github/scripts/build_triton_wheel.py --device xpu --commit-hash ${TRITON_COMMIT_ID}
+          #pip install pytorch_triton_xpu-*.
+          pip install pytorch-triton-xpu==3.4.0+gitae324eea --index-url https://download.pytorch.org/whl/nightly/xpu
       - name: Install Pytorch XPU
         run: |
           source activate e2e_ci
