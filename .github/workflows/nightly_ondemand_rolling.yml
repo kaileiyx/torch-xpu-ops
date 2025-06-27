@@ -66,19 +66,6 @@ concurrency:
   cancel-in-progress: ${{ github.event_name != 'schedule' }}
 
 jobs:
-  Linux-Nightly-Ondemand-UT-Tests-Rolling:
-    if: ${{ github.event_name == 'schedule' || inputs.ut != '' }}
-    name: linux-nightly-ondemand-rolling
-    uses: ./.github/workflows/_linux_ut.yml
-    with:
-      keep_torch_xpu_ops: ${{ github.event_name == 'schedule' && 'false' || inputs.keep_torch_xpu_ops }}
-      ut: ${{ github.event_name == 'schedule' && 'op_regression,op_regression_dev1,op_transformers,op_extended,op_ut' || inputs.ut }}
-      pytorch: ${{ github.event_name == 'schedule' && 'nightly' || inputs.pytorch }}
-      python: ${{ github.event_name == 'schedule' && '3.10' || inputs.python }}
-      triton: ${{ github.event_name == 'schedule' && '' || inputs.triton }}
-      driver: rolling
-      runner: BMG_UT
-
   Linux-Nightly-Ondemand-E2E-Tests-Rolling:
     runs-on: BMG_perf
     name: linux-nightly-ondemand-rolling / e2e_tests
@@ -110,19 +97,21 @@ jobs:
     steps:
       - name: Checkout torch-xpu-ops
         uses: actions/checkout@v4
-      - name: Prepare Conda ENV
+      - name: Setup Virtual ENVAdd commentMore actions
         run: |
-          which conda && conda clean -ay
-          conda remove --all -y -n e2e_ci || rm -rf $(dirname ${CONDA_EXE})/../envs/e2e_ci
-          conda create -n e2e_ci python=${{ env.python }} cmake ninja -y
-          source activate e2e_ci
+          rm -rf ${HOME}/kaileiyx/myvenv-2.8
+          python -m venv ${HOME}/kaileiyx/myvenv-2.8
+          source ${HOME}/kaileiyx/myvenv-2.8/bin/activate
+          which python && which python3
+          python -V
+          pip list
+          echo "PATH=${HOME}/kaileiyx/myvenv-2.8/bin:$PATH" >> "${GITHUB_ENV}"
           pip install pandas scipy psutil
       - name: Prepare Stock Pytorch
         run: |
           pwd
           cd ../
           rm -rf pytorch || sudo rm -rf pytorch
-          source activate e2e_ci
           git clone https://github.com/pytorch/pytorch pytorch
           cd pytorch && git checkout $(echo ${{ env.pytorch }} |awk '{print $1}') 
           # apply PRs for stock pytorch
@@ -163,7 +152,6 @@ jobs:
           echo ${GITHUB_ENV}
       - name: Triton Installation
         run: |
-          source activate e2e_ci
           cd ../pytorch
           pip install cmake ninja pybind11
           rm -rf pytorch_triton_xpu-*.whl
@@ -171,7 +159,6 @@ jobs:
           pip install pytorch_triton_xpu-*.whl
       - name: Install Pytorch XPU
         run: |
-          source activate e2e_ci
           cd ../pytorch
           pip install -r requirements.txt
           pip install --pre torch==2.8.0 --index-url https://download.pytorch.org/whl/test/xpu
@@ -291,21 +278,6 @@ jobs:
           scenario: ${{ inputs.scenario }}
           hf_token: ${{ secrets.HUGGING_FACE_HUB_TOKEN }}
           driver: rolling
-      - name: Download Reference Artifact
-        id: reference_id
-        run: |
-          set -xe
-          source activate e2e_ci
-          conda install gh --channel conda-forge -y
-          if [ "${{ env.run_type }}" == "on-demand" ];then
-            artifact_type="weekly"
-          else
-            artifact_type="${{ env.run_type }}"
-          fi
-          REFERENCE_RUN_ID="$(gh --repo ${GITHUB_REPOSITORY} issue view ${reference_issue} \
-            --json body -q .body |grep "Inductor-${artifact_type}-LTS-XPU-E2E" |sed 's/.*: *//')"
-          gh --repo ${GITHUB_REPOSITORY} run download ${REFERENCE_RUN_ID} -p "Inductor-*-XPU-E2E-*"
-          rm -rf reference && mv Inductor-*-XPU-E2E-* reference
       - name: Summarize archieve files
         id: summary
         if: ${{ ! cancelled() }}
@@ -318,7 +290,6 @@ jobs:
           tar zcf xpu-inductor-${GITHUB_RUN_ID}.tgz -C ${{ github.workspace }}/upload_files/ . # backup logs
           # Print summary
           if [ "${{ inputs.suite }}" != 'pt2e' ];then
-            source activate e2e_ci
             export LTS_OR_ROLLING='rolling'
             bash ${{ github.workspace }}/.github/scripts/e2e_summary.sh \
                 ${{ github.workspace }}/upload_files \
@@ -331,7 +302,6 @@ jobs:
               exit ${exit_label}
             fi
           else
-            source activate e2e_ci
             cp -r ${{ github.workspace }}/.github/scripts/summary_pt2e.py ${{ github.workspace }}/upload_files
             cd ${{ github.workspace }}/upload_files
             python summary_pt2e.py ${{ github.workspace }}/upload_files/inductor_log/pt2e
