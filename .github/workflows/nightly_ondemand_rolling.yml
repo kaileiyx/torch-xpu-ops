@@ -113,8 +113,8 @@ jobs:
           pwd
           cd ../
           rm -rf pytorch || sudo rm -rf pytorch
-          git clone https://github.com/pytorch/pytorch pytorch
-          cd pytorch && git checkout $(echo ${{ env.pytorch }} |awk '{print $1}') 
+          git clone https://github.com/mengfei25/pytorch pytorch
+          cd pytorch && git checkout mengfeil/2.7.1
           # apply PRs for stock pytorch
           pip install requests
           python ../torch-xpu-ops/.github/scripts/apply_torch_pr.py
