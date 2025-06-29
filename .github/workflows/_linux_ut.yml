@@ -62,11 +62,6 @@ jobs:
       - name: Prepare Stock Pytorch
         run: |
           pwd
-          which conda && conda clean -ay
-          conda remove --all -y -n xpu_op_${ZE_AFFINITY_MASK} || \
-                rm -rf $(dirname ${CONDA_EXE})/../envs/xpu_op_${ZE_AFFINITY_MASK}
-          conda create -n xpu_op_${ZE_AFFINITY_MASK} python=${{ inputs.python }} cmake ninja -y
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           cd ../
           rm -rf pytorch || sudo rm -rf pytorch
           pip install requests
@@ -87,19 +82,8 @@ jobs:
           fi
       - name: Triton Installation
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           cd ../pytorch
-          if [ -z ${{ inputs.triton }} ]; then
-            TRITON_COMMIT_ID="$(<.ci/docker/ci_commit_pins/triton-xpu.txt)"
-          else
-            TRITON_COMMIT_ID="${{ inputs.triton }}"
-          fi
-          if [ "${{ inputs.pytorch }}" != "nightly_wheel" ]; then
-            pip install cmake ninja pybind11
-            rm -rf pytorch_triton_xpu-*.whl
-            python .github/scripts/build_triton_wheel.py --device xpu --commit-hash ${TRITON_COMMIT_ID}
-            pip install pytorch_triton_xpu-*.whl
-          fi
+          pip install pytorch-triton-xpu==3.4.0+gitae324eea --index-url https://download.pytorch.org/whl/nightly/xpu
       - name: Download Pytorch wheel
         if: ${{ inputs.pytorch != 'nightly_wheel' }}
         uses: actions/download-artifact@v4
@@ -108,7 +92,6 @@ jobs:
           path: ${{ github.workspace }}
       - name: Install Pytorch XPU
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           pip install --pre torch==2.8.0 --index-url https://download.pytorch.org/whl/test/xpu
           TORCH_COMMIT_ID=$(python -c 'import torch; print(torch.version.git_version)')
           cd ../pytorch
@@ -123,7 +106,6 @@ jobs:
           pip install -r .ci/docker/requirements-ci.txt
       - name: Torch Config
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           python -c "import torch; print(torch.__config__.show())"
           python -c "import torch; print(torch.__config__.parallel_info())"
           python -c "import torch; print(torch.__config__.torch.xpu.device_count())"
@@ -139,7 +121,6 @@ jobs:
           cd ${{ github.workspace }}
           mkdir -p ut_log/op_regression
           xpu-smi discovery
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           cd ${{ github.workspace }}
           cd test/regressions
           pip install pytest pytest-timeout
@@ -153,7 +134,6 @@ jobs:
           cd ${{ github.workspace }}
           mkdir -p ut_log/op_regression_dev1
           xpu-smi discovery
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           unset ZE_AFFINITY_MASK
           cd ${{ github.workspace }}
           cd test/regressions
@@ -164,7 +144,6 @@ jobs:
       - name: Run XPU Transformers UT
         if: contains(inputs.ut, 'op_transformers')
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           export PYTORCH_TEST_WITH_SLOW=1
           cd ${{ github.workspace }}
           mkdir -p ut_log/op_transformers
@@ -176,7 +155,6 @@ jobs:
       - name: Run XPU OP Extended UT
         if: contains(inputs.ut, 'op_extended')
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           export PYTORCH_TEST_WITH_SLOW=1
           cd ${{ github.workspace }}
           mkdir -p ut_log/op_extended
@@ -188,7 +166,6 @@ jobs:
       - name: Run XPU OP UT
         if: contains(inputs.ut, 'op_ut')
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           export PYTORCH_ENABLE_XPU_FALLBACK=1
           export PYTORCH_TEST_WITH_SLOW=1
           cd ${{ github.workspace }}
@@ -221,7 +198,6 @@ jobs:
       - name: Run Torch XPU UT
         if: contains(inputs.ut, 'torch_xpu')
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           cd ${{ github.workspace }}
           mkdir -p ut_log/torch_xpu
           cd ../pytorch
@@ -260,7 +236,6 @@ jobs:
       - name: Run Torch XPU Profile UT
         if: ${{ inputs.driver == 'rolling' && contains(inputs.ut, 'xpu_profiling') }} 
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           mkdir -p ${{ github.workspace }}/ut_log/profile_test
           # RN50 Test
           PROFILE=1 python -u test/profiling/rn50.py -a resnet50 --dummy ./ --num-iterations 20 --xpu 0
@@ -291,7 +266,6 @@ jobs:
             tee ${{ github.workspace }}/ut_log/profile_test/test_profiler_tree.log
       - name: UT Test Results Summary
         run: |
-          source activate xpu_op_${ZE_AFFINITY_MASK}
           pip install junitparser
           python .github/scripts/check-ut.py ${{ github.workspace }}/ut_log/*.xml >> $GITHUB_STEP_SUMMARY || true
           if [ -e "ut_failure_list.csv" ];then
