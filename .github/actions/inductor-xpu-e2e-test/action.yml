@@ -50,7 +50,6 @@ runs:
       if: ${{ inputs.env_prepare }}
       shell: bash
       run: |
-        source activate e2e_ci
         if [[ ${{ inputs.suite }} == *"torchbench"* ]]; then
           if [ "${{ inputs.pytorch }}" != "" ]; then
             cd ../ && rm -rf audio && git clone --single-branch -b main https://github.com/pytorch/audio.git
@@ -95,11 +94,10 @@ runs:
     - name: E2E Test (${{ inputs.suite }} ${{ inputs.dt }} ${{ inputs.mode }} ${{ inputs.scenario }})
       env:
         HUGGING_FACE_HUB_TOKEN: ${{ inputs.hf_token }}
-        NEOReadDebugKeys: ${{ inputs.driver == 'rolling' && '1' || '0' }}
-        DisableScratchPages: ${{ inputs.driver == 'rolling' && '1' || '0' }}
+        NEOReadDebugKeys: 1
+        DisableScratchPages: 1
       shell: bash
       run: |
-        source activate e2e_ci
         cp .github/scripts/inductor_xpu_test.sh ../pytorch
         cd ../pytorch
 
@@ -158,7 +156,6 @@ runs:
           cat $var >> inductor_log/summary_accuracy.csv
         done
 
-        source activate e2e_ci
         cd ${{ github.workspace }}
         cp .github/scripts/inductor_summary.py ../pytorch
         cd ../pytorch
