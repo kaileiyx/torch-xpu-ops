@@ -127,6 +127,7 @@ jobs:
             # Workaround for torch-xpu-ops ci test
             sed -i "s/checkout --quiet \${TORCH_XPU_OPS_COMMIT}/log -n 1/g" caffe2/CMakeLists.txt
           fi
+          git apply ../torch-xpu-ops/.github/scripts/torchbench.patch
       - name: Identify pinned versions
         id: pinned
         run: |
