@@ -67,7 +67,7 @@ concurrency:
 
 jobs:
   Linux-Nightly-Ondemand-E2E-Tests-Rolling:
-    runs-on: BMG_2.7_acc
+    runs-on: BMG_perf
     name: linux-nightly-ondemand-rolling / e2e_tests
     timeout-minutes: 3600
     env:
