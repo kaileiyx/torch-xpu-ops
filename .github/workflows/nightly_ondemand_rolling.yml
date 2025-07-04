@@ -157,7 +157,8 @@ jobs:
           #rm -rf pytorch_triton_xpu-*.whl
           #python .github/scripts/build_triton_wheel.py --device xpu --commit-hash ${TRITON_COMMIT_ID}
           #pip install pytorch_triton_xpu-*.whl
-          pip install pytorch-triton-xpu==3.4.0+gitae324eea --index-url https://download.pytorch.org/whl/nightly/xpu
+          #pip install pytorch-triton-xpu==3.4.0+gitae324eea --index-url https://download.pytorch.org/whl/nightly/xpu
+          pip install pytorch-triton-xpu==3.3.0+git0bcc8265 --index-url https://download.pytorch.org/whl/nightly/xpu
       - name: Install Pytorch XPU
         run: |
           cd ../pytorch
