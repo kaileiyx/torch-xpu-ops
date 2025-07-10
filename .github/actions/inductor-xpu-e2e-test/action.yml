@@ -50,8 +50,8 @@ runs:
       if: ${{ inputs.env_prepare }}
       shell: bash
       run: |
-        conda init
-        conda activate e2e_ci
+        source ~/.bashrc
+        source activate e2e_ci
         if [[ ${{ inputs.suite }} == *"torchbench"* ]]; then
           if [ "${{ inputs.pytorch }}" != "" ]; then
             cd ../ && rm -rf audio && git clone --single-branch -b main https://github.com/pytorch/audio.git
@@ -100,8 +100,8 @@ runs:
         DisableScratchPages: 1
       shell: bash
       run: |
-        conda init
-        conda activate e2e_ci
+        source ~/.bashrc
+        source activate e2e_ci
         cp .github/scripts/inductor_xpu_test.sh ../pytorch
         cd ../pytorch
 
@@ -159,8 +159,8 @@ runs:
           sed -i "s/$/,$(basename $var)/" $var
           cat $var >> inductor_log/summary_accuracy.csv
         done
-        conda init
-        conda activate e2e_ci
+        source ~/.bashrc
+        source activate e2e_ci
         cd ${{ github.workspace }}
         cp .github/scripts/inductor_summary.py ../pytorch
         cd ../pytorch
