@@ -102,6 +102,7 @@ jobs:
           which conda && conda clean -ay
           conda remove --all -y -n e2e_ci || rm -rf $(dirname ${CONDA_EXE})/../envs/e2e_ci
           conda create -n e2e_ci python=${{ env.python }} cmake ninja -y
+          conda init
           conda activate e2e_ci
           pip install --upgrade pip setuptools
           pip install pandas scipy psutil
@@ -110,6 +111,7 @@ jobs:
           pwd
           cd ../
           rm -rf pytorch || sudo rm -rf pytorch
+          conda init
           conda activate e2e_ci
           git clone https://github.com/pytorch/pytorch pytorch
           cd pytorch && git checkout $(echo ${{ env.pytorch }} |awk '{print $1}') 
@@ -152,6 +154,7 @@ jobs:
           echo ${GITHUB_ENV}
       - name: Triton Installation
         run: |
+          conda init
           conda activate e2e_ci
           cd ../pytorch
           pip install cmake ninja pybind11
@@ -284,6 +287,7 @@ jobs:
         id: reference_id
         run: |
           set -xe
+          conda init
           conda activate e2e_ci
           conda install gh --channel conda-forge -y
           if [ "${{ env.run_type }}" == "on-demand" ];then
@@ -307,6 +311,7 @@ jobs:
           tar zcf xpu-inductor-${GITHUB_RUN_ID}.tgz -C ${{ github.workspace }}/upload_files/ . # backup logs
           # Print summary
           if [ "${{ inputs.suite }}" != 'pt2e' ];then
+            conda init
             conda activate e2e_ci
             export LTS_OR_ROLLING='rolling'
             bash ${{ github.workspace }}/.github/scripts/e2e_summary.sh \
@@ -320,6 +325,7 @@ jobs:
               exit ${exit_label}
             fi
           else
+            conda init
             conda activate e2e_ci
             cp -r ${{ github.workspace }}/.github/scripts/summary_pt2e.py ${{ github.workspace }}/upload_files
             cd ${{ github.workspace }}/upload_files
