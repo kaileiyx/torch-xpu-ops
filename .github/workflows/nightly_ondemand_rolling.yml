@@ -165,6 +165,8 @@ jobs:
       - name: Install Pytorch XPU
         run: |
           cd ../pytorch
+          source ~/.bashrc
+          source activate e2e_ci
           pip install -r requirements.txt
           pip install --pre torch==2.8.0 --index-url https://download.pytorch.org/whl/test/xpu
       - name: Show GITHUB_ENV
