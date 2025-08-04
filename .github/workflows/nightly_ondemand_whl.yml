@@ -58,7 +58,7 @@ concurrency:
 jobs:
   Linux-Nightly-Ondemand-E2E-WHL-Tests:
     runs-on: oneDNN
-    if: ${{ github.repository_owner == 'intel' }}
+    if: ${{ github.repository_owner == 'kaileiyx' }}
     timeout-minutes: 3600
     env:
       GH_TOKEN: ${{ github.token }}
