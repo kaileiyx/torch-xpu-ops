@@ -119,6 +119,7 @@ jobs:
           git checkout ${TORCH_XPU_OPS_COMMIT}
           cd ../../
           python ../torch-xpu-ops/.github/scripts/apply_torch_pr.py
+          git apply ../torch-xpu-ops/.github/scripts/torchbench.patch
       - name: Identify pinned versions
         id: pinned
         run: |
