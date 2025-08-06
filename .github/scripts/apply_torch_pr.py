@@ -15,7 +15,7 @@ parser.add_argument('--pr-list', '-n', nargs='+',
         "https://github.com/pytorch/pytorch/pull/143739",
         # "Enhance testing infrastructure to add half-precision support for histc on XPU"
         "https://github.com/pytorch/pytorch/pull/154339",
-        #"https://github.com/pytorch/pytorch/pull/159624", oneDNN3.9
+        "https://github.com/pytorch/pytorch/pull/159624",
     ]
 )
 parser.add_argument('--extra-pr-list', '-e', nargs='+',default=[])
