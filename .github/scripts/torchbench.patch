@@ -1,13 +1,15 @@
 diff --git a/benchmarks/dynamo/torchbench.py b/benchmarks/dynamo/torchbench.py
-index 55e91c92bb3..43552d8b298 100755
+index 55e91c92bb3..dc2e48548b8 100755
 --- a/benchmarks/dynamo/torchbench.py
 +++ b/benchmarks/dynamo/torchbench.py
-@@ -403,6 +403,8 @@ class TorchBenchmarkRunner(BenchmarkRunner):
+@@ -403,6 +403,10 @@ class TorchBenchmarkRunner(BenchmarkRunner):
                  or re.search("|".join(args.exclude), model_name, re.IGNORECASE)
                  or model_name in args.exclude_exact
                  or model_name in self.skip_models
 +                or 'detectron2' in model_name
 +                or 'llama_v2_7b_16h' in model_name
++                or 'hf_T5_generate' in model_name
++                or 'llava' in model_name
              ):
                  continue
  
