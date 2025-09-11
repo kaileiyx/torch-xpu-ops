@@ -58,7 +58,7 @@ run-name: ${{ (contains(github.event.schedule, '13') && 'Nightly') || (contains(
 jobs:
   Conditions-Filter:
     name: conditions-filter
-    if: ${{ github.repository_owner == 'intel' }}
+    if: ${{ github.repository_owner == 'kaileiyx' }}
     runs-on: ubuntu-24.04
     timeout-minutes: 3
     outputs:
@@ -134,7 +134,7 @@ jobs:
         build: [build]
     uses: ./.github/workflows/_linux_build.yml
     with:
-      runner: pvc_rolling
+      runner: sdp_bmg
       pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
       torch_xpu_ops: ${{ needs.Conditions-Filter.outputs.torch_xpu_ops }}
       triton: ${{ needs.Conditions-Filter.outputs.triton }}
@@ -151,7 +151,7 @@ jobs:
         ut_name: ${{ fromJSON(needs.Conditions-Filter.outputs.ut) }}
     uses: ./.github/workflows/_linux_ut.yml
     with:
-      runner: pvc_rolling
+      runner: sdp_bmg
       pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
       torch_xpu_ops: ${{ needs.Conditions-Filter.outputs.torch_xpu_ops }}
       python: ${{ needs.Conditions-Filter.outputs.python }}
@@ -168,7 +168,7 @@ jobs:
         suite: ${{ fromJSON(needs.Conditions-Filter.outputs.suite) }}
     uses: ./.github/workflows/_linux_e2e.yml
     with:
-      runner: pvc_rolling
+      runner: sdp_bmg
       test_type: ${{ needs.Conditions-Filter.outputs.test_type }}
       pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
       python: ${{ needs.Conditions-Filter.outputs.python }}
@@ -185,32 +185,3 @@ jobs:
     uses: ./.github/workflows/_linux_e2e_summary.yml
     with:
       test_type: ${{ needs.Conditions-Filter.outputs.test_type }}
-
-  Linux-Nightly-Ondemand-OP-Microbench-Tests-Rolling:
-    if: ${{ github.event_name == 'schedule' || contains(inputs.ut, 'microbench') }}
-    name: linux-microbench
-    permissions: write-all
-    needs: [Conditions-Filter, Linux-Nightly-Ondemand-Build]
-    secrets: inherit
-    strategy:
-      fail-fast: false
-      matrix:
-        microbench: [microbench]
-    uses: ./.github/workflows/_linux_op_benchmark.yml
-    with:
-      runner: pvc_rolling
-      pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
-      python: ${{ needs.Conditions-Filter.outputs.python }}
-
-  Windows-Nightly-Ondemand-UT-Tests:
-    if: ${{ github.event_name == 'schedule' || contains(inputs.ut, 'windows') }}
-    name: windows
-    needs: [Conditions-Filter]
-    secrets: inherit
-    uses: ./.github/workflows/_windows_ut.yml
-    with:
-      ut: 'op_extended,test_xpu'
-      python: ${{ needs.Conditions-Filter.outputs.python }}
-      src_changed: false
-      has_label: true
-      runner: Windows_CI
