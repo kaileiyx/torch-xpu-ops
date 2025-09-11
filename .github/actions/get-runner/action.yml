@@ -80,7 +80,7 @@ runs:
       shell: bash -xe {0}
       run: |
         # clean docker cache
-        docker system prune -af || true
+        sudo docker system prune -af || true
         # clean workspace
         ls -al
         sudo find ./ |grep -v "^\./$" |xargs sudo rm -rf
