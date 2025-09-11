@@ -3,11 +3,11 @@ name: Nightly-OnDemand Tests
 on:
   schedule:
     # GMT+8 21:00 every workday
-    - cron: '10 13 * * 0-4' # build from source
-    - cron: '30 13 * * 0-4' # nightly wheel
+    #- cron: '10 13 * * 0-4' # build from source
+    #- cron: '30 13 * * 0-4' # nightly wheel
     # GMT+8 00:00 Saturday
-    - cron: '10 16 * * 5' # build from source
-    - cron: '30 16 * * 5' # nightly wheel
+    #- cron: '10 16 * * 5' # build from source
+    #- cron: '30 16 * * 5' # nightly wheel
   workflow_dispatch:
     inputs:
       pytorch:
@@ -125,7 +125,6 @@ jobs:
           echo "python=${python}" >> ${GITHUB_OUTPUT}
 
   Linux-Nightly-Ondemand-UT-Tests:
-    if: ${{ github.event_name == 'schedule' || contains(inputs.ut, 'p') }}
     name: linux-ut
     needs: [Conditions-Filter]
     secrets: inherit
@@ -142,7 +141,6 @@ jobs:
       ut: ${{ matrix.ut_name }}
 
   Linux-Nightly-Ondemand-E2E-Tests:
-    if: ${{ github.event_name == 'schedule' || contains(inputs.suite, 'e') }}
     name: linux-e2e
     needs: [Conditions-Filter]
     secrets: inherit
