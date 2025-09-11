@@ -124,26 +124,10 @@ jobs:
           echo "triton=${triton}" >> ${GITHUB_OUTPUT}
           echo "python=${python}" >> ${GITHUB_OUTPUT}
 
-  Linux-Nightly-Ondemand-Build:
-    needs: [Conditions-Filter]
-    name: linux-build
-    secrets: inherit
-    strategy:
-      fail-fast: false
-      matrix:
-        build: [build]
-    uses: ./.github/workflows/_linux_build.yml
-    with:
-      runner: sdp_bmg
-      pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
-      torch_xpu_ops: ${{ needs.Conditions-Filter.outputs.torch_xpu_ops }}
-      triton: ${{ needs.Conditions-Filter.outputs.triton }}
-      python: ${{ needs.Conditions-Filter.outputs.python }}
-
   Linux-Nightly-Ondemand-UT-Tests:
     if: ${{ github.event_name == 'schedule' || contains(inputs.ut, 'p') }}
     name: linux-ut
-    needs: [Conditions-Filter, Linux-Nightly-Ondemand-Build]
+    needs: [Conditions-Filter]
     secrets: inherit
     strategy:
       fail-fast: false
@@ -160,7 +144,7 @@ jobs:
   Linux-Nightly-Ondemand-E2E-Tests:
     if: ${{ github.event_name == 'schedule' || contains(inputs.suite, 'e') }}
     name: linux-e2e
-    needs: [Conditions-Filter, Linux-Nightly-Ondemand-Build]
+    needs: [Conditions-Filter]
     secrets: inherit
     strategy:
       fail-fast: false
