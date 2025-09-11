@@ -7,7 +7,7 @@ on:
     #- cron: '30 13 * * 0-4' # nightly wheel
     # GMT+8 00:00 Saturday
     #- cron: '10 16 * * 5' # build from source
-    #- cron: '30 16 * * 5' # nightly wheel
+    - cron: '30 16 * * 5' # nightly wheel
   workflow_dispatch:
     inputs:
       pytorch:
