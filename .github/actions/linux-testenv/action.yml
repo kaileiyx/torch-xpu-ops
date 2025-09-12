@@ -150,6 +150,7 @@ runs:
     - name: Torch Config
       shell: bash -xe {0}
       run: |
+        source activate e2e_ci
         printenv
         python -c "import torch; print(torch.__config__.show())"
         python -c "import torch; print(torch.__config__.parallel_info())"
