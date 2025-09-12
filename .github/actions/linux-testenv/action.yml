@@ -21,28 +21,6 @@ inputs:
 runs:
   using: composite
   steps:
-    - name: Check runner
-      shell: bash -xe {0}
-      run: |
-        hostname && id
-        cat /etc/os-release
-        gcc -v && g++ -v
-        uname -a
-        dpkg -l |grep -E 'libigc-dev|libze-dev|level-zero-dev|intel-opencl-icd'
-        rm -rf ~/.triton /tmp/*inductor* /tmp/tmp*
-        if [ ! -z ${AGENT_TOOLSDIRECTORY} ];then
-          rm -rf ${AGENT_TOOLSDIRECTORY}
-        fi
-    - name: Setup python-${{ inputs.python }}
-      uses: actions/setup-python@v5
-      with:
-        python-version: ${{ inputs.python }}
-    - name: Check python
-      shell: bash -xe {0}
-      run: |
-        which python && python -V
-        which pip && pip list
-        pip install -U pip wheel setuptools
     - name: Checkout torch-xpu-ops
       uses: actions/checkout@v4
       with:
