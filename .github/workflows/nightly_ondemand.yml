@@ -59,7 +59,7 @@ jobs:
   Conditions-Filter:
     name: conditions-filter
     if: ${{ github.repository_owner == 'kaileiyx' }}
-    runs-on: sdp_bmg
+    runs-on: arc_test
     timeout-minutes: 3
     outputs:
       # Test type, (build or wheel)-(nightly, weekly or ondemand)
@@ -134,7 +134,7 @@ jobs:
         ut_name: ${{ fromJSON(needs.Conditions-Filter.outputs.ut) }}
     uses: ./.github/workflows/_linux_ut.yml
     with:
-      runner: sdp_bmg
+      runner: arc_test
       pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
       torch_xpu_ops: ${{ needs.Conditions-Filter.outputs.torch_xpu_ops }}
       python: ${{ needs.Conditions-Filter.outputs.python }}
@@ -150,7 +150,7 @@ jobs:
         suite: ${{ fromJSON(needs.Conditions-Filter.outputs.suite) }}
     uses: ./.github/workflows/_linux_e2e.yml
     with:
-      runner: sdp_bmg
+      runner: arc_test
       test_type: ${{ needs.Conditions-Filter.outputs.test_type }}
       pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
       python: ${{ needs.Conditions-Filter.outputs.python }}
