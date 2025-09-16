@@ -73,7 +73,7 @@ jobs:
         uses: ./.github/actions/get-runner
 
   test:
-    runs-on: sdp_bmg
+    runs-on: bmg_perf
     needs: runner
     timeout-minutes: 3600
     steps:
