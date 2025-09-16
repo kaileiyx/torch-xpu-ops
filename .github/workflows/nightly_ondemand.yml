@@ -59,7 +59,7 @@ jobs:
   Conditions-Filter:
     name: conditions-filter
     if: ${{ github.repository_owner == 'kaileiyx' }}
-    runs-on: sdp_bmg
+    runs-on: bmg_perf
     timeout-minutes: 3
     outputs:
       # Test type, (build or wheel)-(nightly, weekly or ondemand)
@@ -150,7 +150,7 @@ jobs:
         suite: ${{ fromJSON(needs.Conditions-Filter.outputs.suite) }}
     uses: ./.github/workflows/_linux_e2e.yml
     with:
-      runner: sdp_bmg
+      runner: bmg_perf
       test_type: ${{ needs.Conditions-Filter.outputs.test_type }}
       pytorch: ${{ needs.Conditions-Filter.outputs.pytorch }}
       python: ${{ needs.Conditions-Filter.outputs.python }}
