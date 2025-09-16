@@ -53,7 +53,7 @@ jobs:
   test-in-baremetal:
     needs: runner
     if: ${{ contains(inputs.ut, 'distributed') }}
-    runs-on: ${{ needs.runner.outputs.runner_id }}
+    runs-on: arc_test
     env:
       AGENT_TOOLSDIRECTORY: /tmp/xpu-tool
       PYTEST_ADDOPTS: -v --timeout 600 --timeout_method=thread -n 1
