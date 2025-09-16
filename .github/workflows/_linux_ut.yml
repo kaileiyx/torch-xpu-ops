@@ -48,6 +48,9 @@ jobs:
     steps:
       - name: Checkout torch-xpu-ops
         uses: actions/checkout@v4
+      - name: Get runner
+        id: runner-info
+        uses: ./.github/actions/get-runner
 
   test-in-baremetal:
     needs: runner
@@ -86,7 +89,7 @@ jobs:
   summary:
     needs: [test-in-baremetal]
     if: ${{ ! cancelled() && ! endsWith(needs.test-in-baremetal.result, 'ed') }}
-    runs-on: arc_test
+    runs-on: ubuntu-24.04
     timeout-minutes: 30
     steps:
       - name: Checkout torch-xpu-ops
@@ -98,7 +101,6 @@ jobs:
           path: ${{ github.workspace }}/ut_log
       - name: Check UT Results
         run: |
-          source activate e2e_ci
           ls -al ${{ github.workspace }}/ut_log
           cd ${{ github.workspace }}/ut_log/${{ inputs.ut }}
 
