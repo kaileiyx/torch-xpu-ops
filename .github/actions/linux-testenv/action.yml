@@ -68,7 +68,7 @@ runs:
           TORCH_XPU_OPS_REPO="$(echo ${{ inputs.torch_xpu_ops }} |sed 's/@.*//')"
           TORCH_XPU_OPS_COMMIT="$(echo ${{ inputs.torch_xpu_ops }} |sed 's/.*@//')"
         else
-          TORCH_XPU_OPS_REPO="https://github.com/intel/torch-xpu-ops.git"
+          TORCH_XPU_OPS_REPO="https://github.com/kaileiyx/torch-xpu-ops.git"
           if [ "${{ inputs.torch_xpu_ops }}" == "pinned" ];then
             TORCH_XPU_OPS_COMMIT="$(cat third_party/xpu.txt)"
           else
