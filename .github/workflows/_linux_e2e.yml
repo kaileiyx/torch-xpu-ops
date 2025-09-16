@@ -73,7 +73,7 @@ jobs:
         uses: ./.github/actions/get-runner
 
   test:
-    runs-on: bmg_perf
+    runs-on: bmg_acc
     needs: runner
     timeout-minutes: 3600
     steps:
