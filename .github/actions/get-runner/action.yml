@@ -79,8 +79,6 @@ runs:
     - name: Cleanup host
       shell: bash -xe {0}
       run: |
-        # clean docker cache
-        sudo docker system prune -af || true
         # clean workspace
         ls -al
         sudo find ./ |grep -v "^\./$" |xargs sudo rm -rf
