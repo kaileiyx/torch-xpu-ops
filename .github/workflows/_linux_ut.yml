@@ -37,7 +37,7 @@ env:
 
 jobs:
   runner:
-    runs-on: arc_test
+    runs-on: ${{ inputs.runner }}
     name: get-runner
     outputs:
       runner_id: ${{ steps.runner-info.outputs.runner_id }}
@@ -49,10 +49,9 @@ jobs:
       - name: Checkout torch-xpu-ops
         uses: actions/checkout@v4
 
-
   test-in-baremetal:
-    if: ${{ contains(inputs.ut, 'distributed') }}
-    runs-on: arc_test
+    needs: runner
+    runs-on: ${{ needs.runner.outputs.runner_id }}
     env:
       AGENT_TOOLSDIRECTORY: /tmp/xpu-tool
       PYTEST_ADDOPTS: -v --timeout 600 --timeout_method=thread -n 1
