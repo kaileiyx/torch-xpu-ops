@@ -37,7 +37,7 @@ env:
 
 jobs:
   runner:
-    runs-on: arc_test
+    runs-on: bmg_perf
     name: get-runner
     outputs:
       runner_id: ${{ steps.runner-info.outputs.runner_id }}
@@ -54,7 +54,7 @@ jobs:
 
   test-in-baremetal:
     needs: runner
-    runs-on: arc_test
+    runs-on: bmg_perf
     env:
       AGENT_TOOLSDIRECTORY: /tmp/xpu-tool
       PYTEST_ADDOPTS: -v --timeout 600 --timeout_method=thread -n 1
